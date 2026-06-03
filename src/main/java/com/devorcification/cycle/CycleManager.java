@@ -1,6 +1,12 @@
 package com.devorcification.cycle;
 
 import com.devorcification.Devorcification;
+import com.devorcification.ai.AIDirectorClient;
+import com.devorcification.ai.ActionPlan;
+import com.devorcification.ai.ActionPlanExecutor;
+import com.devorcification.ai.PlayerObserver;
+import com.devorcification.ai.PlayerSnapshot;
+import com.devorcification.ai.ProceduralDirector;
 import com.devorcification.structure.LoopStructureManager;
 import com.devorcification.world.LoopDimension;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -10,9 +16,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -63,6 +70,31 @@ public class CycleManager {
         endDoorCooldown.put(id, true);
         Devorcification.LOGGER.info("[Devorcification] Player {} entered Cycle {}",
             player.getName().getString(), cycle);
+
+        requestAndExecutePlan(player, cycle);
+    }
+
+    private static void requestAndExecutePlan(ServerPlayerEntity player, int cycle) {
+        List<PlayerSnapshot> snapshots = new ArrayList<>();
+        PlayerSnapshot current = PlayerObserver.collectSnapshots().get(player.getUuid());
+        if (current != null) snapshots.add(current);
+
+        AIDirectorClient.requestPlan(cycle, snapshots).whenComplete((planOpt, err) -> {
+            ActionPlan plan = planOpt.orElseGet(() -> {
+                Devorcification.LOGGER.info("[Devorcification AI] Backend unavailable, using procedural fallback for cycle {}", cycle);
+                return ProceduralDirector.generateFallback(cycle, snapshots);
+            });
+            if (err != null) {
+                Devorcification.LOGGER.warn("[Devorcification AI] Plan request error: {}", err.getMessage());
+                plan = ProceduralDirector.generateFallback(cycle, snapshots);
+            }
+            MinecraftServer server = player.getServer();
+            if (server != null) {
+                server.execute(() -> ActionPlanExecutor.execute(plan));
+            } else {
+                ActionPlanExecutor.execute(plan);
+            }
+        });
     }
 
     public static void tickCooldowns(MinecraftServer server) {

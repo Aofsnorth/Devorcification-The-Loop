@@ -1,5 +1,6 @@
 package com.devorcification;
 
+import com.devorcification.ai.PlayerObserver;
 import com.devorcification.command.LoopEntryPoint;
 import com.devorcification.world.LoopDimension;
 import com.devorcification.config.DevorcificationConfig;
@@ -18,8 +19,9 @@ public class Devorcification implements ModInitializer {
         MidnightConfig.init(MOD_ID, DevorcificationConfig.class);
 
         LoopDimension.bootstrap();
+        PlayerObserver.register();
         LoopEntryPoint.register();
 
-        LOGGER.info("[Devorcification: The Loop] Core spatial system registered");
+        LOGGER.info("[Devorcification: The Loop] Core spatial + AI Director registered");
     }
 }
