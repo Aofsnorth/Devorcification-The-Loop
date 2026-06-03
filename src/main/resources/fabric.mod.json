@@ -1,0 +1,39 @@
+{
+    "schemaVersion": 1,
+    "id": "loopcorrupted",
+    "version": "${version}",
+    "name": "Devorcification: The Loop",
+    "description": "A Fabric 1.20.1 mod skeleton for the Devorcification: The Loop project.",
+    "authors": [
+        "Aofsnorth"
+    ],
+    "contact": {
+        "homepage": "https://github.com/Aofsnorth/Devorcification-The-Loop",
+        "sources": "https://github.com/Aofsnorth/Devorcification-The-Loop"
+    },
+    "license": "MIT",
+    "icon": "assets/loopcorrupted/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.loopcorrupted.LoopCorruptedMod"
+        ],
+        "client": [
+            "com.loopcorrupted.client.LoopCorruptedClient"
+        ],
+        "server": [
+            "com.loopcorrupted.server.LoopCorruptedServer"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.15.0",
+        "minecraft": "~1.20.1",
+        "java": ">=17",
+        "fabric-api": "*"
+    },
+    "custom": {
+        "modmenu": {
+            "badges": [ "library" ]
+        }
+    }
+}
