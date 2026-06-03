@@ -3,7 +3,10 @@
     "package": "com.devorcification.mixin",
     "compatibilityLevel": "JAVA_17",
     "client": [],
-    "server": [],
+    "server": [
+        "LoopEscapePreventionMixin$ServerPlayerEscape",
+        "LoopEscapePreventionMixin$GameModeEscape"
+    ],
     "injectors": {
         "defaultRequire": 1
     }
