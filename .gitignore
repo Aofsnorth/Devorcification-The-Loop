@@ -26,3 +26,10 @@ Thumbs.db
 
 # logs
 *.log
+
+# python (backend)
+devorcification-director/.venv/
+devorcification-director/__pycache__/
+devorcification-director/prompts/__pycache__/
+devorcification-director/*.pyc
+devorcification-director/.env

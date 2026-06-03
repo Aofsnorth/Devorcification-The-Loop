@@ -1,0 +1,6 @@
+# Backend devorcification-director runs in /devorcification-director
+devorcification-director/.venv/
+devorcification-director/__pycache__/
+devorcification-director/prompts/__pycache__/
+devorcification-director/*.pyc
+devorcification-director/.env
