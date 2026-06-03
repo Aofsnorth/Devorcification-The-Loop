@@ -1,0 +1,90 @@
+{
+  "ambient_drone": {
+    "category": "ambient",
+    "sounds": [
+      { "name": "minecraft:ambient/cave", "pitch": 0.5, "volume": 0.3, "attenuation_distance": 32, "stream": true }
+    ]
+  },
+  "heartbeat_normal": {
+    "category": "player",
+    "sounds": [
+      { "name": "minecraft:block/note_block/bass", "pitch": 0.8, "volume": 0.6, "attenuation_distance": 4 }
+    ]
+  },
+  "heartbeat_fast": {
+    "category": "player",
+    "sounds": [
+      { "name": "minecraft:block/note_block/bass", "pitch": 1.0, "volume": 0.7, "attenuation_distance": 4 }
+    ]
+  },
+  "heartbeat_panic": {
+    "category": "player",
+    "sounds": [
+      { "name": "minecraft:block/note_block/bass", "pitch": 1.4, "volume": 0.85, "attenuation_distance": 4 }
+    ]
+  },
+  "whisper_generic": {
+    "category": "voice",
+    "sounds": [
+      { "name": "minecraft:entity/warden/heartbeat", "pitch": 1.2, "volume": 0.2, "attenuation_distance": 8 }
+    ]
+  },
+  "whisper_name": {
+    "category": "voice",
+    "sounds": [
+      { "name": "minecraft:entity/warden/heartbeat", "pitch": 1.4, "volume": 0.25, "attenuation_distance": 6 }
+    ]
+  },
+  "footstep_behind": {
+    "category": "blocks",
+    "sounds": [
+      { "name": "minecraft:block/note_block/hat", "pitch": 0.8, "volume": 0.5, "attenuation_distance": 16 }
+    ]
+  },
+  "torch_flicker": {
+    "category": "block",
+    "sounds": [
+      { "name": "minecraft:block/redstone_torch/burnout", "pitch": 1.0, "volume": 0.4, "attenuation_distance": 6 }
+    ]
+  },
+  "door_creak": {
+    "category": "block",
+    "sounds": [
+      { "name": "minecraft:block/wooden_door/close", "pitch": 0.6, "volume": 0.6, "attenuation_distance": 16 }
+    ]
+  },
+  "radio_static": {
+    "category": "ambient",
+    "sounds": [
+      { "name": "minecraft:block/beacon/ambient", "pitch": 0.3, "volume": 0.3, "attenuation_distance": 12, "stream": true }
+    ]
+  },
+  "phone_ring": {
+    "category": "block",
+    "sounds": [
+      { "name": "minecraft:block/bell/use", "pitch": 1.4, "volume": 0.4, "attenuation_distance": 24 }
+    ]
+  },
+  "baby_cry": {
+    "category": "hostile",
+    "sounds": [
+      { "name": "minecraft:entity/warden/agitated", "pitch": 1.6, "volume": 0.5, "attenuation_distance": 24 }
+    ]
+  },
+  "watcher_breath": {
+    "category": "hostile",
+    "sounds": [
+      { "name": "minecraft:entity/warden/heartbeat", "pitch": 0.7, "volume": 0.3, "attenuation_distance": 4 }
+    ]
+  },
+  "watcher_hunt": {
+    "category": "hostile",
+    "sounds": [
+      { "name": "minecraft:entity/warden/roar", "pitch": 0.8, "volume": 0.7, "attenuation_distance": 48, "stream": true }
+    ]
+  },
+  "silence_marker": {
+    "category": "master",
+    "sounds": []
+  }
+}

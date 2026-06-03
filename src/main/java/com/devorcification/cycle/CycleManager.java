@@ -7,6 +7,9 @@ import com.devorcification.ai.ActionPlanExecutor;
 import com.devorcification.ai.PlayerObserver;
 import com.devorcification.ai.PlayerSnapshot;
 import com.devorcification.ai.ProceduralDirector;
+import com.devorcification.audio.AudioManager;
+import com.devorcification.audio.HeartbeatSync;
+import com.devorcification.audio.SoundEventRegistry;
 import com.devorcification.entity.WatcherEntity;
 import com.devorcification.entity.WatcherSpawnHandler;
 import com.devorcification.structure.LoopStructureManager;
@@ -74,6 +77,7 @@ public class CycleManager {
             player.getName().getString(), cycle);
 
         triggerWatcherIfDue(player, cycle);
+        updateAmbientAudio(player, cycle);
         requestAndExecutePlan(player, cycle);
     }
 
@@ -86,6 +90,16 @@ public class CycleManager {
         if (cycle >= 5 && player.getRandom().nextInt(3) == 0) {
             WatcherSpawnHandler.spawnWatcher(world, player, WatcherEntity.State.PERIPHERAL);
         }
+    }
+
+    private static void updateAmbientAudio(ServerPlayerEntity player, int cycle) {
+        float pitch = 1.0f;
+        if (cycle >= 5) pitch = 0.7f;
+        else if (cycle >= 3) pitch = 0.85f;
+        else if (cycle >= 1) pitch = 1.0f;
+        Devorcification.LOGGER.info("[Devorcification Audio] Ambient pitch target = {} (cycle {})", pitch, cycle);
+        AudioManager.playDirectedSound(player, SoundEventRegistry.AMBIENT_DRONE, player.getBlockPos(), 0.3f, pitch);
+        HeartbeatSync.bpmForCycle(cycle);
     }
 
     private static void requestAndExecutePlan(ServerPlayerEntity player, int cycle) {
