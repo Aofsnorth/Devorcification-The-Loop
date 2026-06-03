@@ -1,0 +1,12 @@
+{
+  "blend": {
+    "program": "corruption"
+  },
+  "uniforms": {
+    "DiffuseSampler": [0, 0, "minecraft:main"],
+    "VignetteStrength": [0, 0.0, 1.0],
+    "ChromaticAmount": [0, 0.0, 0.05],
+    "GrainIntensity": [0, 0.0, 0.3],
+    "VhsIntensity": [0, 0.0, 0.5]
+  }
+}

@@ -1,0 +1,24 @@
+{
+    "blend": {
+        "vertex": "devorcification:corruption",
+        "fragment": "devorcification:corruption",
+        "attributes": [
+            "Position",
+            "UV0"
+        ],
+        "samplers": [
+            { "name": "DiffuseSampler" }
+        ],
+        "uniforms": [
+            { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0] },
+            { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0] },
+            { "name": "InSize", "type": "float", "count": 2, "values": [1.0, 1.0] },
+            { "name": "OutSize", "type": "float", "count": 2, "values": [1.0, 1.0] },
+            { "name": "Time", "type": "float", "count": 1, "values": [0.0] },
+            { "name": "VignetteStrength", "type": "float", "count": 1, "values": [0.0] },
+            { "name": "ChromaticAmount", "type": "float", "count": 1, "values": [0.0] },
+            { "name": "GrainIntensity", "type": "float", "count": 1, "values": [0.0] },
+            { "name": "VhsIntensity", "type": "float", "count": 1, "values": [0.0] }
+        ]
+    }
+}

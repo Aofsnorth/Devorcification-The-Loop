@@ -1,0 +1,10 @@
+{
+    "replace": false,
+    "values": [
+        "minecraft:glass",
+        "minecraft:glass_pane",
+        "minecraft:tinted_glass",
+        "minecraft:ice",
+        "minecraft:packed_ice"
+    ]
+}

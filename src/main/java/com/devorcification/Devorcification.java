@@ -20,12 +20,13 @@ public class Devorcification implements ModInitializer {
         LOGGER.info("[Devorcification: The Loop] Initialized");
         MidnightConfig.init(MOD_ID, DevorcificationConfig.class);
 
+        MirrorBlockTag.register();
         ModEntityTypes.register();
         LoopDimension.bootstrap();
         PlayerObserver.register();
         WatcherSpawnHandler.register();
         LoopEntryPoint.register();
 
-        LOGGER.info("[Devorcification: The Loop] Core + entities + AI Director registered");
+        LOGGER.info("[Devorcification: The Loop] Core + entities + AI + shaders registered");
     }
 }

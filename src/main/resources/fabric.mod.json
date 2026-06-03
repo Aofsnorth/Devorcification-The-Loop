@@ -26,7 +26,11 @@
         ]
     },
     "mixins": [
-        "devorcification.mixins.json"
+        "devorcification.mixins.json",
+        {
+            "config": "devorcification.client.mixins.json",
+            "environment": "client"
+        }
     ],
     "depends": {
         "fabricloader": ">=0.15.0",

@@ -38,14 +38,26 @@ public class ActionPlanExecutor {
         if (action.fakeEntity != null) {
             Devorcification.LOGGER.info("[Devorcification AI] Would spawn fake entity {} @({},{},{}) for {}",
                 action.fakeEntity.entityId, action.fakeEntity.x, action.fakeEntity.y, action.fakeEntity.z, playerId);
+            routeShaderIntensity(action.shaderIntensity, 80.0f, 5.0f);
         }
         if (action.shaderIntensity > 0.0f) {
-            Devorcification.LOGGER.info("[Devorcification AI] Would set shader intensity {} for {}",
-                action.shaderIntensity, playerId);
+            routeShaderIntensity(action.shaderIntensity, 0.0f, 0.0f);
         }
         if (action.desyncDelta != 0) {
             Devorcification.LOGGER.info("[Devorcification AI] Would apply desync delta {} for {}",
                 action.desyncDelta, playerId);
+        }
+    }
+
+    private static void routeShaderIntensity(float intensity, float heartbeatBpm, float durationSec) {
+        try {
+            Class<?> sm = Class.forName("com.devorcification.render.ShaderManager");
+            sm.getMethod("setIntensity", float.class).invoke(null, intensity);
+            if (heartbeatBpm > 0.0f) {
+                sm.getMethod("pulseHeartbeat", float.class).invoke(null, heartbeatBpm);
+            }
+        } catch (Throwable t) {
+            Devorcification.LOGGER.debug("[Devorcification AI] ShaderManager unavailable (server side): {}", t.getMessage());
         }
     }
 }
