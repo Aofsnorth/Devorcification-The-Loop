@@ -12,6 +12,7 @@ import com.devorcification.audio.HeartbeatSync;
 import com.devorcification.audio.SoundEventRegistry;
 import com.devorcification.entity.WatcherEntity;
 import com.devorcification.entity.WatcherSpawnHandler;
+import com.devorcification.multiplayer.AsymmetricStateManager;
 import com.devorcification.structure.LoopStructureManager;
 import com.devorcification.world.LoopDimension;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -76,6 +77,7 @@ public class CycleManager {
         Devorcification.LOGGER.info("[Devorcification] Player {} entered Cycle {}",
             player.getName().getString(), cycle);
 
+        AsymmetricStateManager.resetSession();
         triggerWatcherIfDue(player, cycle);
         updateAmbientAudio(player, cycle);
         requestAndExecutePlan(player, cycle);

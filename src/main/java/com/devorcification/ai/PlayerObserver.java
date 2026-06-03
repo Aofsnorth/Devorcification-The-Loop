@@ -39,6 +39,9 @@ public class PlayerObserver {
     private static final Map<UUID, Long> freezeDurationMs = new HashMap<>();
     private static final Map<UUID, Integer> blockPlaceCounter = new HashMap<>();
     private static final Map<UUID, Integer> chatCounter = new HashMap<>();
+    private static final Map<UUID, Integer> realityCheckCounter = new HashMap<>();
+    private static final Map<UUID, Integer> socialConfusionCounter = new HashMap<>();
+    private static final Map<UUID, String> fearProfile = new HashMap<>();
     private static final Map<UUID, Long> sessionStartMs = new HashMap<>();
 
     private static int tickAccumulator = 0;
@@ -86,6 +89,14 @@ public class PlayerObserver {
 
     public static void recordChat(UUID id) {
         chatCounter.merge(id, 1, Integer::sum);
+    }
+
+    public static void recordRealityCheck(UUID id) {
+        realityCheckCounter.merge(id, 1, Integer::sum);
+    }
+
+    public static void recordSocialConfusion(UUID id) {
+        socialConfusionCounter.merge(id, 1, Integer::sum);
     }
 
     private static PlayerSnapshot buildSnapshot(ServerPlayerEntity player, long now) {
@@ -141,10 +152,22 @@ public class PlayerObserver {
         snap.timeInLoopMs = now - startMs;
         snap.capturedAtMs = now;
 
+        int rc = realityCheckCounter.getOrDefault(id, 0);
+        int sc = socialConfusionCounter.getOrDefault(id, 0);
+        if (rc > 3) fearProfile.put(id, "SKEPTIC");
+        else if (sc > 5) fearProfile.put(id, "SOCIALLY_UNSTABLE");
+        else if (snap.backpedalCount > 5) fearProfile.put(id, "COWARD");
+        else if (snap.defensiveBlockPlacements > 0) fearProfile.put(id, "BUILDER");
+        else if (snap.freezeDurationMs > 5000) fearProfile.put(id, "SKEPTIC");
+        else fearProfile.put(id, "UNKNOWN");
+        snap.fearProfile = fearProfile.get(id);
+
         rapidLookCounter.put(id, 0);
         backpedalCounter.put(id, 0);
         blockPlaceCounter.put(id, 0);
         chatCounter.put(id, 0);
+        realityCheckCounter.put(id, 0);
+        socialConfusionCounter.put(id, 0);
         freezeDurationMs.put(id, 0L);
 
         return snap;

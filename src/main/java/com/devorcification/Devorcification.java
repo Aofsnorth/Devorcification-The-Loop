@@ -8,6 +8,8 @@ import com.devorcification.entity.ModEntityTypes;
 import com.devorcification.entity.WatcherSpawnHandler;
 import com.devorcification.world.LoopDimension;
 import com.devorcification.config.DevorcificationConfig;
+import com.devorcification.multiplayer.AsymmetricStateManager;
+import com.devorcification.multiplayer.SocialGraphEngine;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -45,8 +47,10 @@ public class Devorcification implements ModInitializer {
         LoopDimension.bootstrap();
         PlayerObserver.register();
         WatcherSpawnHandler.register();
+        AsymmetricStateManager.register();
+        SocialGraphEngine.register();
         LoopEntryPoint.register();
 
-        LOGGER.info("[Devorcification: The Loop] Core + entities + AI + shaders + audio registered");
+        LOGGER.info("[Devorcification: The Loop] Core + entities + AI + shaders + audio + asymmetric multiplayer registered");
     }
 }
