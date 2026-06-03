@@ -13,6 +13,11 @@ import com.devorcification.audio.SoundEventRegistry;
 import com.devorcification.entity.WatcherEntity;
 import com.devorcification.entity.WatcherSpawnHandler;
 import com.devorcification.multiplayer.AsymmetricStateManager;
+import com.devorcification.pacing.FalseReliefEvent;
+import com.devorcification.pacing.MenaceGauge;
+import com.devorcification.pacing.PacingDirector;
+import com.devorcification.ending.EndingDirector;
+import com.devorcification.ending.EndingSequence;
 import com.devorcification.structure.LoopStructureManager;
 import com.devorcification.world.LoopDimension;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -77,10 +82,32 @@ public class CycleManager {
         Devorcification.LOGGER.info("[Devorcification] Player {} entered Cycle {}",
             player.getName().getString(), cycle);
 
+        EndingDirector.Ending ending = EndingDirector.evaluate(player.getServer(), player, cycle);
+        if (ending != null) {
+            Devorcification.LOGGER.info("[Devorcification] Ending {} triggered at cycle {} for {}",
+                ending.name(), cycle, player.getName().getString());
+            EndingSequence.execute(player, ending);
+            return;
+        }
+
+        PacingDirector.Act act = PacingDirector.getCurrentAct(cycle);
+        PacingDirector.logAct(act);
+        MenaceGauge.setIntensity(id, MenaceGauge.Intensity.values()[MenaceGauge.getIntensityForCycle(cycle)]);
+
         AsymmetricStateManager.resetSession();
         triggerWatcherIfDue(player, cycle);
         updateAmbientAudio(player, cycle);
+
+        if (PacingDirector.shouldTriggerFalseRelief(id, cycle, lastIntenseEventMs(id))) {
+            FalseReliefEvent.schedule(player.getServer(), player, FalseReliefEvent.Type.GHOST_GONE, 0);
+            Devorcification.LOGGER.info("[Devorcification] False relief triggered for {}", player.getName().getString());
+        }
+
         requestAndExecutePlan(player, cycle);
+    }
+
+    private static long lastIntenseEventMs(UUID id) {
+        return MenaceGauge.getLastIntenseEventMs(id);
     }
 
     private static void triggerWatcherIfDue(ServerPlayerEntity player, int cycle) {

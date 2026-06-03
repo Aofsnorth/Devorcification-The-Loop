@@ -10,6 +10,7 @@ import com.devorcification.world.LoopDimension;
 import com.devorcification.config.DevorcificationConfig;
 import com.devorcification.multiplayer.AsymmetricStateManager;
 import com.devorcification.multiplayer.SocialGraphEngine;
+import com.devorcification.pacing.MenaceGauge;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -51,6 +52,6 @@ public class Devorcification implements ModInitializer {
         SocialGraphEngine.register();
         LoopEntryPoint.register();
 
-        LOGGER.info("[Devorcification: The Loop] Core + entities + AI + shaders + audio + asymmetric multiplayer registered");
+        LOGGER.info("[Devorcification: The Loop] Core + entities + AI + shaders + audio + asymmetric + pacing + endings registered");
     }
 }
