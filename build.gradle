@@ -12,6 +12,10 @@ base {
 }
 
 repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://maven.modrinth.com'
+    }
     // Add additional repositories here if needed
 }
 
@@ -20,6 +24,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "me.midnight:midnightlib:1.9.3+1.20.1-fabric"
 
     // Optional GUI/config dependencies (uncomment when ready):
     // modImplementation "com.terraformersmc:modmenu:7.2.2"
