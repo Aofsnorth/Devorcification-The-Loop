@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
     id 'java'
 }
@@ -12,7 +12,7 @@ base {
 }
 
 repositories {
-    // Add repositories here if needed
+    // Add additional repositories here if needed
 }
 
 dependencies {
@@ -20,6 +20,10 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // Optional GUI/config dependencies (uncomment when ready):
+    // modImplementation "com.terraformersmc:modmenu:7.2.2"
+    // modImplementation "me.shedaniel.cloth:cloth-config-fabric:12.0.121"
 }
 
 processResources {
@@ -53,6 +57,6 @@ publishing {
         }
     }
     repositories {
-        // Publish to your own repo here if desired
+        // Configure Maven publishing repository here when needed
     }
 }
