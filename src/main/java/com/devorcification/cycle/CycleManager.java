@@ -7,6 +7,8 @@ import com.devorcification.ai.ActionPlanExecutor;
 import com.devorcification.ai.PlayerObserver;
 import com.devorcification.ai.PlayerSnapshot;
 import com.devorcification.ai.ProceduralDirector;
+import com.devorcification.entity.WatcherEntity;
+import com.devorcification.entity.WatcherSpawnHandler;
 import com.devorcification.structure.LoopStructureManager;
 import com.devorcification.world.LoopDimension;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -71,7 +73,19 @@ public class CycleManager {
         Devorcification.LOGGER.info("[Devorcification] Player {} entered Cycle {}",
             player.getName().getString(), cycle);
 
+        triggerWatcherIfDue(player, cycle);
         requestAndExecutePlan(player, cycle);
+    }
+
+    private static void triggerWatcherIfDue(ServerPlayerEntity player, int cycle) {
+        ServerWorld world = LoopDimension.getLoopWorld(player.getServer());
+        if (world == null) return;
+        if (cycle >= 2) {
+            WatcherSpawnHandler.spawnWatcher(world, player, WatcherEntity.State.PERIPHERAL);
+        }
+        if (cycle >= 5 && player.getRandom().nextInt(3) == 0) {
+            WatcherSpawnHandler.spawnWatcher(world, player, WatcherEntity.State.PERIPHERAL);
+        }
     }
 
     private static void requestAndExecutePlan(ServerPlayerEntity player, int cycle) {
