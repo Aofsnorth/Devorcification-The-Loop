@@ -54,7 +54,7 @@ public class LoopEntryPoint {
 
         ServerWorld loop = LoopDimension.getLoopWorld(server);
         if (loop != null) {
-            for (net.minecraft.entity.Entity e : loop.getEntityLookup().iterate()) {
+            for (net.minecraft.entity.Entity e : loop.iterateEntities()) {
                 if (e instanceof net.minecraft.entity.projectile.thrown.EnderPearlEntity pearl) {
                     if (pearl.getOwner() instanceof ServerPlayerEntity owner
                         && LoopDimension.isLoopDimension(owner.getWorld())) {

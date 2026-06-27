@@ -8,12 +8,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 
 public class LoopDimension {
-    public static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(
-        RegistryKeys.WORLD, new Identifier(Devorcification.MOD_ID, "the_loop"));
     public static final RegistryKey<World> WORLD_KEY = RegistryKey.of(
         RegistryKeys.WORLD, new Identifier(Devorcification.MOD_ID, "the_loop"));
     public static final RegistryKey<DimensionType> DIMENSION_TYPE_KEY = RegistryKey.of(

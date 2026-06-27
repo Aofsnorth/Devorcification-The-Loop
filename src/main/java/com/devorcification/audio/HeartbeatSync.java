@@ -1,7 +1,7 @@
 package com.devorcification.audio;
 
 import com.devorcification.Devorcification;
-import com.devorcification.render.ShaderManager;
+import com.devorcification.render.ShaderHooks;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class HeartbeatSync {
@@ -12,7 +12,7 @@ public class HeartbeatSync {
     public static final float BPM_TERROR = 140.0f;
 
     public static void syncHeartbeat(ServerPlayerEntity target, float bpm) {
-        ShaderManager.pulseHeartbeat(bpm);
+        ShaderHooks.pulseHeartbeat(bpm);
         if (target != null) {
             AudioManager.playHeartbeat(target, bpm);
         }
@@ -22,19 +22,19 @@ public class HeartbeatSync {
 
     public static void fadeToNormal(ServerPlayerEntity target, float targetBpm, float durationSec) {
         new Thread(() -> {
-            float start = ShaderManager.heartbeatBpm;
+            float start = ShaderHooks.heartbeatBpm();
             long end = System.currentTimeMillis() + (long) (durationSec * 1000L);
             float startMs = System.currentTimeMillis();
             while (System.currentTimeMillis() < end) {
                 float t = (System.currentTimeMillis() - startMs) / (durationSec * 1000L);
                 float bpm = start + (targetBpm - start) * t;
-                ShaderManager.pulseHeartbeat(bpm);
+                ShaderHooks.pulseHeartbeat(bpm);
                 if (target != null && target.isAlive()) {
                     AudioManager.playHeartbeat(target, bpm);
                 }
                 try { Thread.sleep(200L); } catch (InterruptedException e) { break; }
             }
-            ShaderManager.pulseHeartbeat(targetBpm);
+            ShaderHooks.pulseHeartbeat(targetBpm);
         }, "devorcification-heartbeat-fade").start();
     }
 

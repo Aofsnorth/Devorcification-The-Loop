@@ -1,10 +1,11 @@
 package com.devorcification.multiplayer;
 
 import com.devorcification.Devorcification;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -15,32 +16,30 @@ public record AsymmetricBlockPacket(
     BlockPos pos,
     BlockState fakeState,
     int durationTicks
-) implements CustomPayload {
+) implements FabricPacket {
 
-    public static final CustomPayload.Id<AsymmetricBlockPacket> ID =
-        new CustomPayload.Id<>(new Identifier(Devorcification.MOD_ID, "asymmetric_block"));
+    public static final PacketType<AsymmetricBlockPacket> TYPE =
+        PacketType.create(new Identifier(Devorcification.MOD_ID, "asymmetric_block"), AsymmetricBlockPacket::new);
 
-    public static final PacketCodec<PacketByteBuf, AsymmetricBlockPacket> CODEC =
-        PacketCodec.of(AsymmetricBlockPacket::write, AsymmetricBlockPacket::read);
-
-    public static AsymmetricBlockPacket read(PacketByteBuf buf) {
-        UUID u = buf.readUuid();
-        BlockPos p = buf.readBlockPos();
-        int stateId = buf.readVarInt();
-        BlockState state = BlockState.fromRawId(stateId);
-        int dur = buf.readVarInt();
-        return new AsymmetricBlockPacket(u, p, state, dur);
+    public AsymmetricBlockPacket(PacketByteBuf buf) {
+        this(
+            buf.readUuid(),
+            buf.readBlockPos(),
+            Block.getStateFromRawId(buf.readVarInt()),
+            buf.readVarInt()
+        );
     }
 
+    @Override
     public void write(PacketByteBuf buf) {
         buf.writeUuid(targetUuid);
         buf.writeBlockPos(pos);
-        buf.writeVarInt(net.minecraft.block.Block.getRawIdFromState(fakeState));
+        buf.writeVarInt(Block.getRawIdFromState(fakeState));
         buf.writeVarInt(durationTicks);
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    public PacketType<?> getType() {
+        return TYPE;
     }
 }

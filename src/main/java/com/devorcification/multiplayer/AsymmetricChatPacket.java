@@ -1,9 +1,9 @@
 package com.devorcification.multiplayer;
 
 import com.devorcification.Devorcification;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import java.util.UUID;
@@ -13,22 +13,21 @@ public record AsymmetricChatPacket(
     String fromPlayerName,
     String message,
     long fakeTimestampMs
-) implements CustomPayload {
+) implements FabricPacket {
 
-    public static final CustomPayload.Id<AsymmetricChatPacket> ID =
-        new CustomPayload.Id<>(new Identifier(Devorcification.MOD_ID, "asymmetric_chat"));
+    public static final PacketType<AsymmetricChatPacket> TYPE =
+        PacketType.create(new Identifier(Devorcification.MOD_ID, "asymmetric_chat"), AsymmetricChatPacket::new);
 
-    public static final PacketCodec<PacketByteBuf, AsymmetricChatPacket> CODEC =
-        PacketCodec.of(AsymmetricChatPacket::write, AsymmetricChatPacket::read);
-
-    public static AsymmetricChatPacket read(PacketByteBuf buf) {
-        UUID t = buf.readUuid();
-        String name = buf.readString(32767);
-        String msg = buf.readString(32767);
-        long ts = buf.readLong();
-        return new AsymmetricChatPacket(t, name, msg, ts);
+    public AsymmetricChatPacket(PacketByteBuf buf) {
+        this(
+            buf.readUuid(),
+            buf.readString(32767),
+            buf.readString(32767),
+            buf.readLong()
+        );
     }
 
+    @Override
     public void write(PacketByteBuf buf) {
         buf.writeUuid(targetUuid);
         buf.writeString(fromPlayerName == null ? "" : fromPlayerName);
@@ -37,7 +36,7 @@ public record AsymmetricChatPacket(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    public PacketType<?> getType() {
+        return TYPE;
     }
 }

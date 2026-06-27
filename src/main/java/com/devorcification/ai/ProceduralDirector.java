@@ -50,11 +50,13 @@ public class ProceduralDirector {
                 ActionPlan.PlayerAction a = new ActionPlan.PlayerAction();
                 if (MenaceGauge.canAfford(s.playerId, MenaceGauge.EventType.PERIPHERAL_SPAWN)) {
                     ActionPlan.FakeEntity fe = new ActionPlan.FakeEntity();
-                    fe.entityId = "devorcification:watcher";
-                    fe.mimicTarget = s.playerId == null ? null : s.playerId.toString();
-                    fe.visibleTo = java.util.List.of(s.playerId == null ? "" : s.playerId.toString());
-                    fe.position = "0 62 30";
+                    fe.entityType = "devorcification:watcher";
+                    fe.mimicTargetUuid = s.playerId;
+                    fe.durationTicks = 200;
+                    fe.yaw = 0f;
+                    fe.pitch = 0f;
                     fe.behavior = "STARE";
+                    fe.visibleTo = s.playerId == null ? java.util.List.of() : java.util.List.of(s.playerId.toString());
                     a.fakeEntity = fe;
                     MenaceGauge.spend(s.playerId, MenaceGauge.EventType.PERIPHERAL_SPAWN);
                 } else {

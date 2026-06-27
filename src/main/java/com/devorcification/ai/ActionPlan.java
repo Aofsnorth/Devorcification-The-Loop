@@ -31,17 +31,23 @@ public class ActionPlan {
         public String soundId;
         public float volume;
         public float pitch;
+        public String target;
     }
 
     public static class FakeChat {
-        public String username;
+        public String fromPlayer;
         public String message;
+        public String target;
     }
 
     public static class FakeEntity {
-        public String entityId;
-        public int x;
-        public int y;
-        public int z;
+        public String entityType;
+        public UUID mimicTargetUuid;
+        public String position;
+        public float yaw;
+        public float pitch;
+        public String behavior;
+        public int durationTicks;
+        public List<String> visibleTo;
     }
 }

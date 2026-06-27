@@ -27,6 +27,7 @@ public class PlayerSnapshot {
     public int cycleNumber;
     public long timeInLoopMs;
     public long capturedAtMs;
+    public String fearProfile;
 
     public PlayerSnapshot() {}
 

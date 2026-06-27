@@ -5,7 +5,7 @@ import com.devorcification.audio.AudioManager;
 import com.devorcification.audio.SoundEventRegistry;
 import com.devorcification.cycle.CycleManager;
 import com.devorcification.multiplayer.AsymmetricStateManager;
-import com.devorcification.render.ShaderManager;
+import com.devorcification.render.ShaderHooks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -16,7 +16,7 @@ public class EndingSequence {
         Devorcification.LOGGER.info("[Devorcification Ending] === ENDING: {} for {} ===",
             ending.name(), player.getName().getString());
 
-        ShaderManager.setIntensity(1.0f);
+        ShaderHooks.setIntensity(1.0f);
         AudioManager.playBypassedSound(player, SoundEventRegistry.WATCHER_HUNT, 0.8f, 0.6f);
 
         switch (ending) {

@@ -5,10 +5,11 @@ import com.devorcification.world.LoopDimension;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerGameMode;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -31,17 +32,19 @@ public class LoopEscapePreventionMixin {
         }
     }
 
-    @Mixin(ServerPlayerGameMode.class)
+    @Mixin(ServerPlayerInteractionManager.class)
     public static class GameModeEscape {
-        @Inject(method = "destroyBlock", at = @At("HEAD"), cancellable = true)
+        @Shadow
+        protected ServerPlayerEntity player;
+
+        @Inject(method = "tryBreakBlock", at = @At("HEAD"), cancellable = true)
         private void devorcification$cancelMining(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-            ServerPlayerGameMode self = (ServerPlayerGameMode) (Object) this;
-            ServerPlayerEntity player = (ServerPlayerEntity) self.getPlayer();
+            ServerPlayerEntity player = this.player;
             if (player == null) return;
             if (!LoopDimension.isLoopDimension(player.getWorld())) return;
             if (player.server.getPlayerManager().isOperator(player.getGameProfile())) return;
             BlockState state = player.getWorld().getBlockState(pos);
-            if (state.isAir() || state.isOf(Blocks.VOID_AIR) || state.isOf(Blocks.AIR)) {
+            if (state.isAir() || state.isOf(Blocks.VOID_AIR)) {
                 return;
             }
             Devorcification.LOGGER.info("[Devorcification] Blocked block break at {} in The Loop by {}", pos, player.getName().getString());

@@ -3,7 +3,6 @@ package com.devorcification.multiplayer;
 import com.devorcification.Devorcification;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -20,25 +19,22 @@ public class AsymmetricClient {
 
     public static void register() {
         if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) return;
-        PayloadTypeRegistry.playS2C().register(AsymmetricBlockPacket.ID, AsymmetricBlockPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(AsymmetricEntityPacket.ID, AsymmetricEntityPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(AsymmetricChatPacket.ID, AsymmetricChatPacket.CODEC);
 
-        ClientPlayNetworking.registerGlobalReceiver(AsymmetricBlockPacket.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(AsymmetricBlockPacket.TYPE, (payload, player, sender) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player == null) return;
             if (!client.player.getUuid().equals(payload.targetUuid())) return;
             client.execute(() -> perceivedOverrides.put(payload.pos().toImmutable(), payload.fakeState()));
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(AsymmetricEntityPacket.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(AsymmetricEntityPacket.TYPE, (payload, player, sender) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player == null) return;
             if (!client.player.getUuid().equals(payload.targetUuid())) return;
             client.execute(() -> handleEntityPacket(payload));
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(AsymmetricChatPacket.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(AsymmetricChatPacket.TYPE, (payload, player, sender) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player == null) return;
             if (!client.player.getUuid().equals(payload.targetUuid())) return;

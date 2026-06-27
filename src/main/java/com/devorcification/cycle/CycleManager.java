@@ -145,11 +145,12 @@ public class CycleManager {
                 Devorcification.LOGGER.warn("[Devorcification AI] Plan request error: {}", err.getMessage());
                 plan = ProceduralDirector.generateFallback(cycle, snapshots);
             }
+            final ActionPlan finalPlan = plan;
             MinecraftServer server = player.getServer();
             if (server != null) {
-                server.execute(() -> ActionPlanExecutor.execute(plan));
+                server.execute(() -> ActionPlanExecutor.execute(finalPlan));
             } else {
-                ActionPlanExecutor.execute(plan);
+                ActionPlanExecutor.execute(finalPlan);
             }
         });
     }

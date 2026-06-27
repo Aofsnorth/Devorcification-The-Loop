@@ -1,9 +1,9 @@
 package com.devorcification.audio;
 
 import com.devorcification.Devorcification;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,26 +18,25 @@ public record DirectedAudioPayload(
     boolean bypassDistance,
     boolean whisperSubtitle,
     String subtitleText
-) implements CustomPayload {
+) implements FabricPacket {
 
-    public static final CustomPayload.Id<DirectedAudioPayload> ID =
-        new CustomPayload.Id<>(new Identifier(Devorcification.MOD_ID, "directed_audio"));
+    public static final PacketType<DirectedAudioPayload> TYPE =
+        PacketType.create(new Identifier(Devorcification.MOD_ID, "directed_audio"), DirectedAudioPayload::new);
 
-    public static final PacketCodec<PacketByteBuf, DirectedAudioPayload> CODEC =
-        PacketCodec.of(DirectedAudioPayload::write, DirectedAudioPayload::read);
-
-    public static DirectedAudioPayload read(PacketByteBuf buf) {
-        UUID uuid = buf.readUuid();
-        Identifier soundId = buf.readIdentifier();
-        BlockPos pos = buf.readBlockPos();
-        float vol = buf.readFloat();
-        float pitch = buf.readFloat();
-        boolean bypass = buf.readBoolean();
-        boolean whisper = buf.readBoolean();
-        String subtitle = buf.readString(32767);
-        return new DirectedAudioPayload(uuid, soundId, pos, vol, pitch, bypass, whisper, subtitle);
+    public DirectedAudioPayload(PacketByteBuf buf) {
+        this(
+            buf.readUuid(),
+            buf.readIdentifier(),
+            buf.readBlockPos(),
+            buf.readFloat(),
+            buf.readFloat(),
+            buf.readBoolean(),
+            buf.readBoolean(),
+            buf.readString(32767)
+        );
     }
 
+    @Override
     public void write(PacketByteBuf buf) {
         buf.writeUuid(targetUuid);
         buf.writeIdentifier(soundId);
@@ -50,7 +49,7 @@ public record DirectedAudioPayload(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    public PacketType<?> getType() {
+        return TYPE;
     }
 }

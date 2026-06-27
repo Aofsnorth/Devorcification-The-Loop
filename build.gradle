@@ -4,17 +4,55 @@ plugins {
     id 'java'
 }
 
+loom {
+    splitEnvironmentSourceSets()
+    mods {
+        devorcification {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+sourceSets {
+    client {
+        java {
+            srcDirs = ['src/client/java']
+        }
+        resources {
+            srcDirs = ['src/client/resources']
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 version = project.mod_version
 group = project.mod_group_id
 
 base {
-    archivesName = project.mod_name
 }
 
 repositories {
     maven {
-        name = 'Modrinth'
-        url = 'https://maven.modrinth.com'
+        name = 'LocalMojang'
+        url = 'file:///C:/Users/Arthe/.minecraft-jars/maven'
+    }
+    maven {
+        name = 'MidnightDust'
+        url = 'https://maven.midnightdust.eu/releases'
+    }
+    maven {
+        name = 'ModrinthApi'
+        url = 'https://api.modrinth.com/maven'
+    }
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases'
+    }
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
     // Add additional repositories here if needed
 }
@@ -24,8 +62,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "me.midnight:midnightlib:1.9.3+1.20.1-fabric"
-    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:4.4.0"
+    modImplementation "eu.midnightdust:midnightlib:1.9.3+1.20.1-fabric"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:4.4.9"
 
     // Optional GUI/config dependencies (uncomment when ready):
     // modImplementation "com.terraformersmc:modmenu:7.2.2"
@@ -51,7 +89,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesName}" }
+        rename { "${it}_${project.mod_name}" }
     }
 }
 

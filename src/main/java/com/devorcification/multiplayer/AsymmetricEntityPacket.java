@@ -1,9 +1,9 @@
 package com.devorcification.multiplayer;
 
 import com.devorcification.Devorcification;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
@@ -19,30 +19,26 @@ public record AsymmetricEntityPacket(
     float pitch,
     String behavior,
     int durationTicks
-) implements CustomPayload {
+) implements FabricPacket {
 
-    public static final CustomPayload.Id<AsymmetricEntityPacket> ID =
-        new CustomPayload.Id<>(new Identifier(Devorcification.MOD_ID, "asymmetric_entity"));
+    public static final PacketType<AsymmetricEntityPacket> TYPE =
+        PacketType.create(new Identifier(Devorcification.MOD_ID, "asymmetric_entity"), AsymmetricEntityPacket::new);
 
-    public static final PacketCodec<PacketByteBuf, AsymmetricEntityPacket> CODEC =
-        PacketCodec.of(AsymmetricEntityPacket::write, AsymmetricEntityPacket::read);
-
-    public static AsymmetricEntityPacket read(PacketByteBuf buf) {
-        UUID t = buf.readUuid();
-        boolean spawn = buf.readBoolean();
-        String et = buf.readString(32767);
-        boolean hasMimic = buf.readBoolean();
-        UUID mimic = hasMimic ? buf.readUuid() : null;
-        double x = buf.readDouble();
-        double y = buf.readDouble();
-        double z = buf.readDouble();
-        float yaw = buf.readFloat();
-        float pitch = buf.readFloat();
-        String beh = buf.readString(32767);
-        int dur = buf.readVarInt();
-        return new AsymmetricEntityPacket(t, spawn, et, mimic, new Vec3d(x, y, z), yaw, pitch, beh, dur);
+    public AsymmetricEntityPacket(PacketByteBuf buf) {
+        this(
+            buf.readUuid(),
+            buf.readBoolean(),
+            buf.readString(32767),
+            buf.readBoolean() ? buf.readUuid() : null,
+            new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble()),
+            buf.readFloat(),
+            buf.readFloat(),
+            buf.readString(32767),
+            buf.readVarInt()
+        );
     }
 
+    @Override
     public void write(PacketByteBuf buf) {
         buf.writeUuid(targetUuid);
         buf.writeBoolean(spawn);
@@ -59,8 +55,8 @@ public record AsymmetricEntityPacket(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    public PacketType<?> getType() {
+        return TYPE;
     }
 
     public static AsymmetricEntityPacket spawn(UUID target, FakeEntityData d) {

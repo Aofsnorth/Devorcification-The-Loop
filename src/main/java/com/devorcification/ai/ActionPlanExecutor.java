@@ -54,19 +54,26 @@ public class ActionPlanExecutor {
         }
         if (action.fakeChat != null) {
             AsymmetricStateManager.queueFakeChat(playerId,
-                action.fakeChat.username == null ? "?" : action.fakeChat.username,
+                action.fakeChat.fromPlayer == null ? "?" : action.fakeChat.fromPlayer,
                 action.fakeChat.message == null ? "" : action.fakeChat.message);
             routeShaderIntensity(action.shaderIntensity, 80.0f);
         }
         if (action.fakeEntity != null) {
             FakeEntityData fed = new FakeEntityData();
-            fed.entityType = action.fakeEntity.entityId;
-            fed.position = new Vec3d(action.fakeEntity.x, action.fakeEntity.y, action.fakeEntity.z);
-            fed.behavior = "stand_stare";
-            fed.durationTicks = 200;
-            fed.mimicTargetUuid = null;
+            fed.entityType = action.fakeEntity.entityType;
+            fed.position = parsePositionString(action.fakeEntity.position);
+            fed.yaw = action.fakeEntity.yaw;
+            fed.pitch = action.fakeEntity.pitch;
+            fed.behavior = action.fakeEntity.behavior == null ? "stand_stare" : action.fakeEntity.behavior;
+            fed.durationTicks = action.fakeEntity.durationTicks > 0 ? action.fakeEntity.durationTicks : 200;
+            fed.mimicTargetUuid = action.fakeEntity.mimicTargetUuid;
             Set<UUID> visible = new HashSet<>();
-            visible.add(playerId);
+            if (action.fakeEntity.visibleTo != null) {
+                for (String s : action.fakeEntity.visibleTo) {
+                    try { visible.add(UUID.fromString(s)); } catch (Exception ignored) {}
+                }
+            }
+            if (visible.isEmpty()) visible.add(playerId);
             fed.visibleTo = visible;
             AsymmetricStateManager.spawnFakeEntity(playerId, fed);
             routeShaderIntensity(action.shaderIntensity, 80.0f);
@@ -85,9 +92,24 @@ public class ActionPlanExecutor {
         Identifier id = blockId.contains(":")
             ? new Identifier(blockId)
             : new Identifier("minecraft", blockId);
-        var opt = Registries.BLOCK.get(id);
-        if (opt.isEmpty()) return null;
-        return opt.get().value().getDefaultState();
+        var block = Registries.BLOCK.get(id);
+        if (block == null) return null;
+        return block.getDefaultState();
+    }
+
+    private static Vec3d parsePositionString(String pos) {
+        if (pos == null || pos.isBlank()) return new Vec3d(0, 62, 30);
+        String[] parts = pos.trim().split("\\s+");
+        if (parts.length < 3) return new Vec3d(0, 62, 30);
+        try {
+            return new Vec3d(
+                Double.parseDouble(parts[0]),
+                Double.parseDouble(parts[1]),
+                Double.parseDouble(parts[2])
+            );
+        } catch (NumberFormatException e) {
+            return new Vec3d(0, 62, 30);
+        }
     }
 
     private static void routeAudio(UUID playerId, ActionPlan.PlayerAction action) {
@@ -96,8 +118,7 @@ public class ActionPlanExecutor {
             var id = action.directedAudio.soundId.contains(":")
                 ? new Identifier(action.directedAudio.soundId)
                 : new Identifier("minecraft", action.directedAudio.soundId);
-            var opt = Registries.SOUND_EVENT.get(id);
-            if (opt.isPresent()) sound = opt.get().value();
+            sound = Registries.SOUND_EVENT.get(id);
         }
         if (sound == null) return;
         ServerPlayerEntity target = Devorcification.findPlayer(playerId);

@@ -1,28 +1,17 @@
 package com.devorcification.audio;
 
 import com.devorcification.Devorcification;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public class AudioManager {
@@ -34,70 +23,15 @@ public class AudioManager {
     public static long lastSilenceFlagAtMs = 0;
 
     public static void register() {
-        PayloadTypeRegistry.playC2S().register(DirectedAudioPayload.ID, DirectedAudioPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(DirectedAudioPayload.ID, DirectedAudioPayload.CODEC);
-
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
-            ServerPlayNetworking.registerGlobalReceiver(DirectedAudioPayload.ID, (payload, context) -> {
-                ServerPlayerEntity sender = context.player();
-                Devorcification.LOGGER.info("[Devorcification Audio] Received directed audio server-side from {}", sender.getName().getString());
-            });
-        } else {
-            ClientPlayNetworking.registerGlobalReceiver(DirectedAudioPayload.ID, (payload, context) -> {
-                MinecraftClient client = MinecraftClient.getInstance();
-                if (client.player == null) return;
-                if (!client.player.getUuid().equals(payload.targetUuid())) return;
-                client.execute(() -> playClientSide(payload));
-            });
-        }
+        ServerPlayNetworking.registerGlobalReceiver(DirectedAudioPayload.TYPE, (payload, player, sender) -> {
+            Devorcification.LOGGER.info("[Devorcification Audio] Received directed audio server-side from {}", player.getName().getString());
+        });
 
         ServerTickEvents.END_SERVER_TICK.register(AudioManager::tick);
     }
 
-    private static void playClientSide(DirectedAudioPayload payload) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        var registry = Registries.SOUND_EVENT.get(payload.soundId());
-        if (registry.isEmpty()) return;
-        SoundEvent sound = registry.get().value();
-
-        if (payload.bypassDistance()) {
-            client.getSoundManager().play(new net.minecraft.client.sound.PositionedSoundInstance(
-                sound,
-                net.minecraft.client.sound.SoundCategory.PLAYERS,
-                payload.volume(),
-                payload.pitch(),
-                false,
-                0,
-                net.minecraft.client.sound.SoundInstance.AttenuationType.NONE,
-                0.0, 0.0, 0.0,
-                false
-            ));
-        } else {
-            client.getSoundManager().play(new net.minecraft.client.sound.PositionedSoundInstance(
-                sound,
-                net.minecraft.client.sound.SoundCategory.PLAYERS,
-                payload.volume(),
-                payload.pitch(),
-                false,
-                0,
-                net.minecraft.client.sound.SoundInstance.AttenuationType.LINEAR,
-                (float) payload.origin().getX(),
-                (float) payload.origin().getY(),
-                (float) payload.origin().getZ(),
-                false
-            ));
-        }
-
-        if (payload.whisperSubtitle() && !payload.subtitleText().isEmpty()) {
-            client.inGameHud.setOverlayMessage(Text.literal(payload.subtitleText()), false);
-        }
-
-        lastEventAtMs.put(client.player.getUuid(), System.currentTimeMillis());
-    }
-
     public static void playDirectedSound(ServerPlayerEntity target, SoundEvent sound, BlockPos pos, float volume, float pitch) {
         if (target == null || sound == null) return;
-        ServerWorld world = target.getServerWorld();
         Identifier id = Registries.SOUND_EVENT.getId(sound);
         if (id == null) return;
         DirectedAudioPayload payload = new DirectedAudioPayload(

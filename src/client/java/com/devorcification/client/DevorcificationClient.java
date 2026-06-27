@@ -1,6 +1,7 @@
 package com.devorcification.client;
 
 import com.devorcification.Devorcification;
+import com.devorcification.audio.AudioClient;
 import com.devorcification.audio.SoundEventRegistry;
 import com.devorcification.entity.ModEntityTypes;
 import com.devorcification.entity.WatcherRenderer;
@@ -17,6 +18,7 @@ public class DevorcificationClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModEntityTypes.WATCHER, WatcherRenderer::new);
         AsymmetricClient.register();
+        AudioClient.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ShaderManager.masterIntensity *= 0.985f;

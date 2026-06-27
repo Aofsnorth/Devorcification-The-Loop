@@ -3,9 +3,7 @@ package com.devorcification.multiplayer;
 import com.devorcification.Devorcification;
 import com.devorcification.ai.ActionPlan;
 import com.devorcification.audio.AudioManager;
-import com.devorcification.audio.DirectedAudioPayload;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.MinecraftServer;
@@ -32,10 +30,6 @@ public class AsymmetricStateManager {
     private static final Map<UUID, Long> lastBlockOverrideAtMs = new HashMap<>();
 
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(AsymmetricBlockPacket.ID, AsymmetricBlockPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(AsymmetricEntityPacket.ID, AsymmetricEntityPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(AsymmetricChatPacket.ID, AsymmetricChatPacket.CODEC);
-
         ServerTickEvents.END_SERVER_TICK.register(AsymmetricStateManager::tick);
     }
 
@@ -46,9 +40,9 @@ public class AsymmetricStateManager {
             if (audio != null && !audio.isEmpty()) {
                 ActionPlan.DirectedAudio a = audio.poll();
                 if (a != null) {
-                    var opt = net.minecraft.registry.Registries.SOUND_EVENT.get(new net.minecraft.util.Identifier(a.soundId));
-                    if (opt.isPresent()) {
-                        AudioManager.playBypassedSound(p, opt.get().value(), a.volume, a.pitch);
+                    var sound = net.minecraft.registry.Registries.SOUND_EVENT.get(new net.minecraft.util.Identifier(a.soundId));
+                    if (sound != null) {
+                        AudioManager.playBypassedSound(p, sound, a.volume, a.pitch);
                     }
                 }
             }

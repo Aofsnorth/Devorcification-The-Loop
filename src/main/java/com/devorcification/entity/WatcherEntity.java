@@ -3,7 +3,10 @@ package com.devorcification.entity;
 import com.devorcification.Devorcification;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Arm;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -60,8 +63,26 @@ public class WatcherEntity extends LivingEntity implements GeoEntity {
 
     public WatcherEntity(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
-        this.noGravity = false;
         this.setNoGravity(false);
+    }
+
+    @Override
+    public Arm getMainArm() {
+        return Arm.RIGHT;
+    }
+
+    @Override
+    public Iterable<ItemStack> getArmorItems() {
+        return java.util.Collections.emptyList();
+    }
+
+    @Override
+    public ItemStack getEquippedStack(EquipmentSlot slot) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void equipStack(EquipmentSlot slot, ItemStack stack) {
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
